@@ -167,11 +167,14 @@ export class AWClient {
     }
 
     public async getSetting(key: string): Promise<string> {
-        return this.req.get("/0/settings" + key);
+        const settings = "" + await this.req.get("/0/settings" + key);
+        return settings;
     }
 
-    public async getSettingsKeys(): Promise<List<string>> {
-        return this.req.get("/0/settings");
+    public async getSettingsKeys(): Promise<string[]> {
+        const rawKeys = await this.req.get("/0/settings");
+        const parsedKeys = rawKeys.map(key => "" + key);
+        return parsedKeys;
     }
 
     public async setSetting(key: string, value: string): Promise<undefined> {
