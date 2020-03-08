@@ -166,6 +166,25 @@ export class AWClient {
         return undefined;
     }
 
+    public async getSetting(key: string): Promise<string> {
+        return this.req.get("/0/settings" + key);
+    }
+
+    public async getSettingsKeys(): Promise<List<string>> {
+        return this.req.get("/0/settings");
+    }
+
+    public async setSetting(key: string, value: string): Promise<undefined> {
+        return this.req.post("/0/settings", {
+            key,
+            value,
+        });
+    }
+
+    public async deleteSetting(key: string): Promise<undefined> {
+        return this.req.delete("/0/settings" + key);
+    }
+
     /**
      *
      * @param bucketId The id of the bucket to send the heartbeat to
