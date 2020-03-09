@@ -40,6 +40,11 @@ interface IInfo {
   version: string;
   testing: boolean;
 }
+interface IKeyValue {
+    key: string;
+    timestamp: Date;
+    value: string;
+}
 
 export class AWClient {
     public clientname: string;
@@ -166,26 +171,30 @@ export class AWClient {
         return undefined;
     }
 
-    public async getSetting(key: string): Promise<string> {
-        const settings = "" + await this.req.get("/0/settings" + key);
-        return settings;
+    public async getSetting(key: string): Promise<IKeyValue> {
+        const settings = await this.req.get("/0/settings/" + key);
+        const internalKey = settings.data.key;
+        const { value, timestamp } = settings.data;
+        return {key: internalKey, value, timestamp: new Date(timestamp)};
     }
 
-    public async getSettingsKeys(): Promise<string[]> {
+    public async getSettingsKeys(): Promise<IKeyValue[]> {
         const rawKeys = await this.req.get("/0/settings");
-        const parsedKeys = rawKeys.map(key => "" + key);
+        const parsedKeys = rawKeys.data.map((key: string) => key);
         return parsedKeys;
     }
 
     public async setSetting(key: string, value: string): Promise<undefined> {
-        return this.req.post("/0/settings", {
+        await this.req.post("/0/settings", {
             key,
             value,
         });
+        return undefined;
     }
 
     public async deleteSetting(key: string): Promise<undefined> {
-        return this.req.delete("/0/settings" + key);
+        await this.req.delete("/0/settings/" + key);
+        return undefined;
     }
 
     /**
